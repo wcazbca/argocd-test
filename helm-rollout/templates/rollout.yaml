@@ -17,7 +17,7 @@ spec:
       - name: rollouts-demo
         image: {{ .Values.image.name }}:{{ .Values.image.tag }}
   strategy:
-    greenBlue:
+    blueGreen: 
       activeService: rollout-analysis-step
       autoPromotionSeconds: 300
     # canary:
