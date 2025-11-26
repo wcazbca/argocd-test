@@ -16,52 +16,27 @@ spec:
       containers:
       - name: rollouts-demo
         image: {{ .Values.image.name }}:{{ .Values.image.tag }}
-        imagePullPolicy: Always
-        # lifecycle:
-        #   preStop:
-        #     httpGet:
-        #       path: /traffic/off
-        #       port: 8080
-            # exec:
-            #   command: ["/bin/sh", "-c", "curl -X POST http://localhost:8080/traffic/off && echo OK || echo Failed"]
-        ports:
-        - containerPort: 8080
-        readinessProbe:
-          httpGet:
-            path: {{ .Values.probes.ready }}
-            port: {{ .Values.probes.port }}
-          initialDelaySeconds: 2
-          periodSeconds: 5
-          timeoutSeconds: 1
-          successThreshold: 1
-          failureThreshold: 3
-        livenessProbe:
-          httpGet:
-            path: {{ .Values.probes.live }}
-            port: {{ .Values.probes.port }}
-          initialDelaySeconds: 5
-          periodSeconds: 10
-          timeoutSeconds: 1
-          successThreshold: 1
-          failureThreshold: 3
   strategy:
-    canary:
-      # maxSurge: 1
-      # maxUnavailable: 0
-      steps:
-      - setWeight: 30
-      - pause: { duration: 30s }
-      - setWeight: 60
-      - pause: { duration: 30s }
-      - setWeight: 100
-      - pause: { duration: 10s }
-      - analysis:
-          args:
-          - name: stable-hash
-            valueFrom:
-              podTemplateHashValue: Stable
-          - name: latest-hash
-            valueFrom:
-              podTemplateHashValue: Latest
-          templates:
-          - templateName: pass
+    greenBlue:
+      activeService: rollout-analysis-step
+      autoPromotionSeconds: 300
+    # canary:
+    #   # maxSurge: 1
+    #   # maxUnavailable: 0
+    #   steps:
+    #   - setWeight: 30
+    #   - pause: { duration: 30s }
+    #   - setWeight: 60
+    #   - pause: { duration: 30s }
+    #   - setWeight: 100
+    #   - pause: { duration: 10s }
+    #   - analysis:
+    #       args:
+    #       - name: stable-hash
+    #         valueFrom:
+    #           podTemplateHashValue: Stable
+    #       - name: latest-hash
+    #         valueFrom:
+    #           podTemplateHashValue: Latest
+    #       templates:
+    #       - templateName: pass
