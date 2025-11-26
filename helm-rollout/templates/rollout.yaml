@@ -19,7 +19,18 @@ spec:
   strategy:
     blueGreen: 
       activeService: rollout-analysis-step
+      previewService: rollout-analysis-step-preview
       autoPromotionSeconds: 300
+      prePromotionAnalysis:
+        args:
+        - name: stable-hash
+          valueFrom:
+            podTemplateHashValue: Stable
+        - name: latest-hash
+          valueFrom:
+            podTemplateHashValue: Latest
+        templates:
+        - templateName: pass
     # canary:
     #   # maxSurge: 1
     #   # maxUnavailable: 0
