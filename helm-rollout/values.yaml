@@ -5,7 +5,8 @@
 replicaCount: 1
 
 image:
-  name: "argoproj/rollouts-demo"
+  name: "kirbah/blue-green"
+  # name: "argoproj/rollouts-demo"
   tag: "green"
 
 probes:
