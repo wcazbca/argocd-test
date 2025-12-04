@@ -29,8 +29,25 @@ spec:
         - name: latest-hash
           valueFrom:
             podTemplateHashValue: Latest
-        templates:
-        - templateName: pass
+        metrics:
+        - name: pass
+          count: 1
+          interval: 5s
+          failureLimit: 1
+          provider:
+            job:
+              spec:
+                template:
+                  spec:
+                    containers:
+                    - name: sleep
+                      image: alpine:3.8
+                      command: [sh, -c, 'echo "STABLE-HASH: {{ "{{" }} args.stable-hash {{ "}}" }},LATEST-HASH:{{ "{{" }}args.latest-hash{{ "}}" }}"']
+                    - name: curl
+                      image: alpine/curl
+                      command: ["sh", "-c", "for i in $(seq 1 20); do curl rollout-analysis-step-preview; sleep 1; done"]
+                    restartPolicy: Never
+                backoffLimit: 0
     # canary:
     #   # maxSurge: 1
     #   # maxUnavailable: 0
